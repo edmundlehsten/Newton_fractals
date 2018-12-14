@@ -68,6 +68,7 @@ class fractal2D:
         return
     def simpleNewtonMethod(self):
         """
+        Author: Edmund
         (task 5)
         TODO: write method descriptiion and method...
         """
