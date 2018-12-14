@@ -6,38 +6,59 @@ Created on Fri Dec 14 10:02:03 2018
 import numpy as np
 
 class fractal2D:
-    def __init__(self, f, der = None):
+    def __init__(self, f, derivative = None):
         """
         f : function taking a tuple and returning a tuple
-        der : reivative of function
+        der : derivative of the function taking a tuple and returning a 2x2 matrix (Jacobian matrix)
         """
-        self.func = f
-        if not der is None:
-            self.der = der
+        self.function = f
+        if not derivative is None:
+            self.derivative = derivative
         else:
-            der = None # TODO: need to compute derivative somehow...
+            derivative = None # TODO: need to compute derivative somehow...
         self.zeros = np.array([])
     
-    def newtonMethod(self, guess):
+class fractal2D:
+    def __init__(self, f, derivative = None):
+        """
+        f : function taking a tuple and returning a tuple
+        der : derivative of the function taking a tuple and returning a 2x2 matrix (Jacobian matrix)
+        """
+        self.function = f
+        if not derivative is None:
+            self.derivative = derivative
+        else:
+            derivative = None # TODO: need to compute derivative somehow...
+        self.zeros = np.array([])
+    
+    def newtonMethod(self,guess):
         """
         function that carries out the newton integration method
         Author: Edmund
         Inputs
         ======
-        guess - initial guess to for a zero
+        guess - tuple or list of length 2 with float/ integer entries
         
         Outputs        
         ======
-        tuple - loaction of zero, returns None if the guess did not converge
+        zero - loaction of zero, returns None if the guess did not converge (tuple)
         """
-        maxloop = 10
-        new_guess = 0 #initiate value here so that it dose not get reinitiated for each loop (to improve performance)
+        if isinstance(guess,(list,tuple)) and size(list)==2:
+            guess=array(guess)
+        else:
+            raise TypeError('The initial guess is not of the correct type. It must be a list with two integer/ float entries, a tuple or an array of size (2,)')
+        
+        maxloop = 1000
+        new_guess = array([0,0]) #initiate value here so that it dose not get reinitiated for each loop (to improve performance)
         for i in range(maxloop):
-            new_guess = guess - self.f(guess)/self.der(guess) #should work but need a R^2 function and derivative to test...
-            if np.abs(new_guess-guess) < 10**(-5): #close enough to a zero value...
+            new_guess = guess - np.matmul(np.linalg.inv(self.derivative(guess[0],guess[1])),self.function(guess[0],guess[1])) #should work but need a R^2 function and derivative to test...
+            if np.abs(new_guess[0]-guess[0]) < 10**(-5) and np.abs(new_guess[1]-guess[1]) < 10**(-5): #close enough to a zero value...
                 return new_guess
             guess = new_guess
-        return None  # return none if did not converge
+        else:
+            return None  # return None if did not converge
+
+# %% new cell
         
     def find_zero(self, guess):
         """
