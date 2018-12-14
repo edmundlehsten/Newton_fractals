@@ -17,22 +17,25 @@ class fractal2D:
         else:
             derivative = None # TODO: need to compute derivative somehow...
         self.zeros = np.array([])
-    
+
     def newtonMethod(self,guess):
         """
         function that carries out the newton integration method
         Author: Edmund
         Inputs
         ======
-        guess - tuple
+        guess - tuple or list of length 2 with float/ integer entries
         
         Outputs        
         ======
         zero - loaction of zero, returns None if the guess did not converge (tuple)
         """
-        #if (not (isinstance(guess,array) and (size(guess)==2)) or (not (isinstance(guess,list) and size(guess)==2 and isinstance(guess[0],(int,float)) and isinstance(guess,(int,float))))):
-        #    raise TypeError('The given initial value is not of the right type')
-            
+
+        if isinstance(guess,(list,tuple)) and size(list)==2:
+            guess=array(guess)
+        else:
+            raise TypeError('The initial guess is not of the correct type. It must be a list with two integer/ float entries, a tuple or an array of size (2,)')
+        
         maxloop = 1000
         new_guess = array([0,0]) #initiate value here so that it dose not get reinitiated for each loop (to improve performance)
         for i in range(maxloop):
@@ -41,9 +44,8 @@ class fractal2D:
                 return new_guess
             guess = new_guess
         else:
-            return None  # return none if did not converge
+            return None  # return None if did not converge
 
-# %% new cell
         
     def find_zero(self, guess):
         """
