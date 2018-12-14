@@ -17,20 +17,7 @@ class fractal2D:
         else:
             derivative = None # TODO: need to compute derivative somehow...
         self.zeros = np.array([])
-    
-class fractal2D:
-    def __init__(self, f, derivative = None):
-        """
-        f : function taking a tuple and returning a tuple
-        der : derivative of the function taking a tuple and returning a 2x2 matrix (Jacobian matrix)
-        """
-        self.function = f
-        if not derivative is None:
-            self.derivative = derivative
-        else:
-            derivative = None # TODO: need to compute derivative somehow...
-        self.zeros = np.array([])
-    
+
     def newtonMethod(self,guess):
         """
         function that carries out the newton integration method
@@ -43,6 +30,7 @@ class fractal2D:
         ======
         zero - loaction of zero, returns None if the guess did not converge (tuple)
         """
+
         if isinstance(guess,(list,tuple)) and size(list)==2:
             guess=array(guess)
         else:
@@ -58,7 +46,6 @@ class fractal2D:
         else:
             return None  # return None if did not converge
 
-# %% new cell
         
     def find_zero(self, guess):
         """
