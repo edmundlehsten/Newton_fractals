@@ -1,23 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Dec 14 10:02:03 2018
-
-"""
 import numpy as np
 
-class fractal2D:
-    def __init__(self, f, derivative = None):
-        """
-        f : function taking a tuple and returning a tuple
-        der : derivative of the function taking a tuple and returning a 2x2 matrix (Jacobian matrix)
-        """
-        self.function = f
-        if not derivative is None:
-            self.derivative = derivative
-        else:
-            derivative = None # TODO: need to compute derivative somehow...
-        self.zeros = np.array([])
-    
 class fractal2D:
     def __init__(self, f, derivative = None):
         """
@@ -34,18 +16,18 @@ class fractal2D:
     def newtonMethod(self,guess):
         """
         function that carries out the newton integration method
-        Author: Edmund
+        Author: Nadine
         Inputs
         ======
-        guess - tuple or list of length 2 with float/ integer entries
+        guess - tuple, list or 1-dimensional array of length 2 with float/ integer entries
         
         Outputs        
         ======
         zero - loaction of zero, returns None if the guess did not converge (tuple)
         """
-        if isinstance(guess,(list,tuple)) and size(list)==2:
+        if isinstance(guess,(list,tuple)) and size(guess)==2:
             guess=array(guess)
-        else:
+        elif not (str(type(guess))=="<class 'numpy.ndarray'>" and size(guess)==2):
             raise TypeError('The initial guess is not of the correct type. It must be a list with two integer/ float entries, a tuple or an array of size (2,)')
         
         maxloop = 1000
@@ -57,7 +39,6 @@ class fractal2D:
             guess = new_guess
         else:
             return None  # return None if did not converge
-
 # %% new cell
         
     def find_zero(self, guess):
