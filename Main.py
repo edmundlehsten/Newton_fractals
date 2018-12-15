@@ -16,7 +16,7 @@ class fractal2D:
             self.der = der
         else:
             der = None # TODO: need to compute derivative somehow...
-        self.zeros = np.array([])
+        self.zeros = np.array([[]])
     
     def newtonMethod(self, guess):
         """
