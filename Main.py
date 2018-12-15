@@ -60,12 +60,28 @@ class fractal2D:
             np.append(self.zeros,val) #add value to zeros
             return self.zeros.size-1
     
-    def plot(self):
-        """
-        (Task 4)
-        TODO: Write description of method... 
-        """
-        return
+    def plot(self, N, a, b, c, d):"""where N eventually determines the size of the matrix and a,b,c,d are the maually given intervals"""
+        N.self=N
+        a.self=a
+        b.self=b
+        c.self=c
+        d.self=d
+        X, Y=np.meshgrid(linspace(a,b,N),linspace(c,d,N),indexing='ij')
+        X=X.transpose()
+        Y=Y.transpose()
+        v_zeroes=np.vectorize(zeroes)
+        A=(v_zeroes(X,Y))
+        pcolor(X,Y,A)
+        return plt.plot(X,Y,marker='.',colour='k',linstyle='none'),
+      
+     
+    
+    
+    
+    
+    
+    
+    
     def simpleNewtonMethod(self):
         """
         (task 5)
