@@ -8,9 +8,9 @@ class fractal2D:
         self.function = f
         self.zeros = np.array([])
         if derivative==None:
-            self.derivative=str(None)
+            self.derivativeInput=str(None)
         else:
-            self.derivative=derivative
+            self.derivativeInput=derivative
        
     def partialDerivatives(self,x,y):
         """
@@ -27,14 +27,14 @@ class fractal2D:
         if not (isinstance(x,(int,float)) and isinstance(y,(int,float))):
             raise TypeError('The two input variables must be integers or floats.')
             
-        if self.derivative=="None":
+        if self.derivativeInput=="None":
             f=self.function
             J=zeros(2)
             h=1e-10
             J=1/h*array([f(x+h,y)-f(x,y),f(x,y+h)-f(x,y)]).T
             return J
         else:
-            return self.derivative(x,y)
+            return self.derivativeInput(x,y)
     
     def newtonMethod(self,guess):
         """
