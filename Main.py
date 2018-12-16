@@ -6,9 +6,10 @@ class fractal2D:
         der : derivative of the function taking a tuple and returning a 2x2 matrix (Jacobian matrix)
         """
         self.function = f
-        self.zeros = np.array([])
+        self.zeros = np.array([[]])
 
     def newtonMethod(self,guess):
+
         """
         function that carries out the newton integration method
         Author: Edmund
@@ -34,4 +35,33 @@ class fractal2D:
             guess = new_guess
         else:
             return None  # return None if did not converge
-        
+  
+  
+  def find_zero(self, guess):
+        """
+        Output
+        ======
+        returns index of zero, None if point did not converge
+        """
+        val = newtonMethod(guess)
+        if val is None: # value did not converge
+            return None        
+        if (self.zeros-val < 10**-5).any: #zero already exists
+            np.where(self.zeros-val < 10**-5)
+        else:  # value dose not exist yet
+            np.append(self.zeros,val) #add value to zeros
+            return self.zeros.size-1
+    
+    def plot(self):
+        """
+        (Task 4)
+        TODO: Write description of method... 
+        """
+        return
+    def simpleNewtonMethod(self):
+        """
+        (task 5)
+        TODO: write method descriptiion and method...
+        """
+        return
+
