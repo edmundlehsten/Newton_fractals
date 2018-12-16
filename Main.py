@@ -60,12 +60,10 @@ class fractal2D:
             np.append(self.zeros,val) #add value to zeros
             return self.zeros.size-1
     
-    def plot(self, N, a, b, c, d):"""where N eventually determines the size of the matrix and a,b,c,d are the maually given intervals"""
-        N.self=N
-        a.self=a
-        b.self=b
-        c.self=c
-        d.self=d
+    def plot(self, N, a, b, c, d):
+        """where N eventually determines the size of the matrix and a,b,c,d are the maually
+        given intervals (a,c) corresponds to the bottom left corner of the grid 
+        and (b,d) the top right corner of the grid"""
         X, Y=np.meshgrid(linspace(a,b,N),linspace(c,d,N),indexing='ij')
         X=X.transpose()
         Y=Y.transpose()
