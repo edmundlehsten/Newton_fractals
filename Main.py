@@ -61,9 +61,11 @@ class fractal2D:
             return self.zeros.size-1
     
     def plot(self, N, a, b, c, d):
-        """where N eventually determines the size of the matrix and a,b,c,d are the maually
+        """
+        where N eventually determines the size of the matrix and a,b,c,d are the maually
         given intervals (a,c) corresponds to the bottom left corner of the grid 
-        and (b,d) the top right corner of the grid"""
+        and (b,d) the top right corner of the grid
+        """
         Y, X=np.meshgrid(linspace(a,b,N),linspace(c,d,N),indexing='ij')
         v_zeroes=np.vectorize(zeroes)
         A=(v_zeroes(X,Y))
