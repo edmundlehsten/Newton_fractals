@@ -70,7 +70,7 @@ class fractal2D:
         """
         Gives the transpposed matrices X and Y
         """
-        v_zeroes=np.vectorize(zeroes)
+        v_zeroes=np.vectorize(find_zero)
         """ vectorizes the function v_zeroes
         """
         A=(v_zeroes(X,Y))
