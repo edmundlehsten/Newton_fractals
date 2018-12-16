@@ -15,6 +15,6 @@ def plot(N,a,b,c,d):
     Y=Y.transpose()
     v_zeroes=np.vectorize(zeroes) #this is the vectorized function of zeroes,task 3(?)
     A=(v_zeroes(X, Y) )#this creates a matrix A
-    pcolor(X,Y,A) #probably not correct but wanted to see if A does what it should
+    print(pcolor(X,Y,A)) #probably not correct but wanted to see if A does what it should
     return X, Y, plt.plot(X, Y , marker='.', color='k', linestyle='none')
 plot(50,1,5,2,6)
