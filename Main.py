@@ -67,8 +67,16 @@ class fractal2D:
         and (b,d) the top right corner of the grid
         """
         Y, X=np.meshgrid(linspace(a,b,N),linspace(c,d,N),indexing='ij')
+        """
+        Gives the transpposed matrices X and Y
+        """
         v_zeroes=np.vectorize(zeroes)
+        """ vectorizes the function v_zeroes
+        """
         A=(v_zeroes(X,Y))
+        """
+        creats matrix A 
+        """
         pcolor(X,Y,A)
         return plt.plot(X,Y,marker='.',colour='k',linstyle='none'),
       
