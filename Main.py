@@ -66,45 +66,24 @@ class fractal2D:
         TODO: Write description of method... 
         """
         return
-    def simpleNewtonMethod(self,N,a,b,c,d):
-        #gen grid matrix
-        X,Y = np.meshgrid(np.linspace(a,c,N),np.linspace(b,d,N))
-        # def method for one step at point x,y
-        def approximate(x,y):
-            return np.array([x,y]) - (self.f(x,y)*self.der(x,y).inverse())  
-            # not tested, probably wront sintex but the general calculation should be correct
-        #vectorise previous method
-        approx = np.vectorise(approximate)
-        #carry out vectorised method on entire grid
-        approx_mat = approx(X,Y)
-        # def get index
-        max_index = 0
-        def get_index(x,y):
-            if index[x,y]>-1: # if we already know the value here
-                return index[x,y]
-            delta = approx_mat[x,y]
-            new_x = delta[0]
-            new_y = delta[1]
-            if new_x > np.max(a,c) or new_x < np.min(a,c):
-                return 0  # out of bounds for x hence we gues it dose not converge...
-            elif new_y < np.min(b,d) or new_y > np.max(a,b):
-                return 0  # out of bounds for y hence we guess it dose not converge...
-            
-            mapx = int((N*(new_x-a)/(c-a))+0.5)  # add 0.5 to improve rounding and prevent it from always rounding down.
-            mapy = int((N*(new_y-b)/(d-b))+0.5)
+    def simpleNewtonMethod(self,guess):
+        """
+        Input
+        =====
+        guess - tuple for inital guess
 
-            if mapx == x and mapy == y:
-                #on same spot -> at zero -> return next index
-                max_index += 1
-                index[x,y] = max_index
-            index[x,y] = get_index(mapx,mapy)
-            return index[x,y] 
+        Output
+        ======
+        tuple, zero we converged to, None if it did not converge
 
-        #vectorise previous definition
-        get_index_mat = np.vectorise(get_index) 
-        #gen index matrix to store where each point converged to
-        index = -1 * np.ones(N,N,dtype = int)
-        #run vectorised matrix on whole index matrix
-        index = get_index_mat(X,Y)
-        #return index matrix
-        return index
+        """
+        maxLoop = 1000
+        new_guess = np.array([0,0])
+        jacob_mat = np.linalg.inv(self.partialDerivatives(guess[0],guess[1]))
+        for i in range(maxLoop):
+            new_guess = guess - np.matmul(jacob_mat, f(guess[0],guess[1])) # copied from task 2
+            dist =  (new_guess - guess)**2
+            if (dist < 10**-5).all():
+                return new_guess
+            guess = new_guess
+        return None
