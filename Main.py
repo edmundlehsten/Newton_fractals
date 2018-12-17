@@ -92,6 +92,7 @@ class fractal2D:
 
         Y, X=np.meshgrid(linspace(a,b,N),linspace(c,d,N),indexing='ij')
         """
+<<<<<<< HEAD
         Gives the transpposed matrices X and Y
         """
         v_zeroes=np.vectorize(find_zero)
@@ -140,20 +141,25 @@ class fractal2D:
             
             mapx = int((N*(new_x-a)/(c-a))+0.5)  # add 0.5 to improve rounding and prevent it from always rounding down.
             mapy = int((N*(new_y-b)/(d-b))+0.5)
+        return
+    def simpleNewtonMethod(self,guess):
+        """
+        Input
+        =====
+        guess - tuple for inital guess
 
-            if mapx == x and mapy == y:
-                #on same spot -> at zero -> return next index
-                max_index += 1
-                index[x,y] = max_index
-            index[x,y] = get_index(mapx,mapy)
-            return index[x,y] 
+        Output
+        ======
+        tuple, zero we converged to, None if it did not converge
+        """
 
-        #vectorise previous definition
-        get_index_mat = np.vectorise(get_index) 
-        #gen index matrix to store where each point converged to
-        index = -1 * np.ones(N,N,dtype = int)
-        #run vectorised matrix on whole index matrix
-        index = get_index_mat(X,Y)
-        #return index matrix
-        return index
-
+        maxLoop = 1000
+        new_guess = np.array([0,0])
+        jacob_mat = np.linalg.inv(self.partialDerivatives(guess[0],guess[1]))
+        for i in range(maxLoop):
+            new_guess = guess - np.matmul(jacob_mat, f(guess[0],guess[1])) # copied from task 2
+            dist =  (new_guess - guess)**2
+            if (dist < 10**-5).all():
+                return new_guess
+            guess = new_guess
+        return None
