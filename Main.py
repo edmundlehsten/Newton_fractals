@@ -1,5 +1,29 @@
 import numpy as np
 class fractal2D:
+    def partialDerivatives(self,x,y):
+        """
+        function that calculates the Jacobian of a DIFFERENTIABLE function
+        Author: Nadine
+        Inputs
+        ======
+        x,y - floats/ integers
+        
+        Outputs        
+        ======
+        J - Jacobian (partial derivatives) of a function
+        """
+        if not (isinstance(x,(int,float)) and isinstance(y,(int,float))):
+            raise TypeError('The two input variables must be integers or floats.')
+            
+        if self.derivativeInput=="None":
+            f=self.function
+            J=zeros(2)
+            h=1e-10
+            J=1/h*array([f(x+h,y)-f(x,y),f(x,y+h)-f(x,y)]).T
+            return J
+        else:
+            return self.derivativeInput(x,y)
+
     def __init__(self, f, derivative = None):
         """
         f : function taking a tuple and returning a tuple
@@ -7,7 +31,10 @@ class fractal2D:
         """
         self.function = f
         self.zeros = np.array([[]])
-
+        if derivative == None:
+            self.derivativeInput = str(None)
+        else:
+            self.derivativeInput = derivative
     def newtonMethod(self,guess):
 
         """
@@ -36,31 +63,9 @@ class fractal2D:
         else:
             return None  # return None if did not converge
   
-    def partialDerivatives(self,x,y):
-        """
-        function that calculates the Jacobian of a DIFFERENTIABLE function
-        Author: Nadine
-        Inputs
-        ======
-        x,y - floats/ integers
-        
-        Outputs        
-        ======
-        J - Jacobian (partial derivatives) of a function
-        """
-        if not (isinstance(x,(int,float)) and isinstance(y,(int,float))):
-            raise TypeError('The two input variables must be integers or floats.')
-            
-        if self.derivativeInput=="None":
-            f=self.function
-            J=zeros(2)
-            h=1e-10
-            J=1/h*array([f(x+h,y)-f(x,y),f(x,y+h)-f(x,y)]).T
-            return J
-        else:
-            return self.derivativeInput(x,y)
+    
   
-  def find_zero(self, guess):
+    def find_zero(self, guess):
         """
         Output
         ======
