@@ -79,6 +79,11 @@ class fractal2D:
         """
         pcolor(X,Y,A)
         return plt.plot(X,Y,marker='.',colour='k',linstyle='none'),
+    
+    """
+    input: tuple
+    output: matrix, matrix grid 
+    """
       
      
     
