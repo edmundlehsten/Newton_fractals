@@ -1,5 +1,6 @@
 from scipy import *
 import numpy as np
+from matplotlib import pyplot as pt
 
 class fractal2D:
     def partialDerivatives(self,x,y):
@@ -31,7 +32,7 @@ class fractal2D:
         der : derivative of the function taking a tuple and returning a 2x2 matrix (Jacobian matrix)
         """
         self.function = f
-        self.zeros = np.array([])
+        self.zeros = np.array([[ ]])
         if derivative==None:
             self.derivative=self.partialDerivatives
         else:
@@ -68,22 +69,40 @@ class fractal2D:
   
     
   
-    def find_zero(self, guess):
+    def find_zero(self, guess, simple_newton = False):
         """
+        function that carries out the newton integration method
+        Author: Edmund
+        Inputs
+        ======
+        guess - initial guess to for a zero
+        
         Output
         ======
         returns index of zero, None if point did not converge
         """
-        val = newtonMethod(guess)
+        val = self.newtonMethod(guess)
+        tol = 10**(-5)  # tolerance value...
         if val is None: # value did not converge
-            return None        
-        if (self.zeros-val < 10**-5).any: #zero already exists
-            np.where(self.zeros-val < 10**-5)
+            return None
+        if self.zeros.size == 0:
+            self.zeros = np.array([val])
+        t = (self.zeros-val)**2
+        dist = t[:,0] + t[:,1]
+        if (dist<tol).any() : #zero exists
+            return np.where(dist<tol)[0][0]
         else:  # value dose not exist yet
-            np.append(self.zeros,val) #add value to zeros
-            return self.zeros.size-1
+            np.reshape(np.append(self.zeros,val),(-1,2)) #add value to zeros
+            return self.zeros.size-1 
     
-    def plot(self, N, a, b, c, d):
+    def call_findZero(self,A,B,simple = False):
+        """
+        a helper function such we can vectorise without a problem
+        """
+        k = (self.find_zero((A,B),simple))
+        return k 
+
+    def plot(self, N, a, b, c, d, simple_newton = False):
         """
         where N eventually determines the size of the matrix and a,b,c,d are the maually
         given intervals (a,c) corresponds to the bottom left corner of the grid 
@@ -92,56 +111,23 @@ class fractal2D:
 
         Y, X=np.meshgrid(linspace(a,b,N),linspace(c,d,N),indexing='ij')
         """
-<<<<<<< HEAD
         Gives the transpposed matrices X and Y
         """
-        v_zeroes=np.vectorize(find_zero)
+        v_zeroes=np.vectorize(self.call_findZero)
         """ vectorizes the function v_zeroes
         """
-        A=(v_zeroes(X,Y))
+        A=(v_zeroes(X,Y,simple_newton))
         """
         creats matrix A 
         """
-        pcolor(X,Y,A)
-        return plt.plot(X,Y,marker='.',colour='k',linstyle='none'),
-    
-    
-     
-    
-    
-    
-    
-    
-    
-    
+        pt.figure()
+        pt.axis("off")
+        pt.pcolor(X,Y,A)
+        pt.savefig("image.png")
+        pt.show()
+        #return plt.plot(X,Y,marker='.',colour='k',linstyle='none'),
+        return None
 
-    def simpleNewtonMethod(self,N,a,b,c,d):
-        #gen grid matrix
-        X,Y = np.meshgrid(np.linspace(a,c,N),np.linspace(b,d,N))
-        # def method for one step at point x,y
-        def approximate(x,y):
-            return np.array([x,y]) - (self.f(x,y)*self.der(x,y).inverse())  
-            # not tested, probably wront sintex but the general calculation should be correct
-        #vectorise previous method
-        approx = np.vectorise(approximate)
-        #carry out vectorised method on entire grid
-        approx_mat = approx(X,Y)
-        # def get index
-        max_index = 0
-        def get_index(x,y):
-            if index[x,y]>-1: # if we already know the value here
-                return index[x,y]
-            delta = approx_mat[x,y]
-            new_x = delta[0]
-            new_y = delta[1]
-            if new_x > np.max(a,c) or new_x < np.min(a,c):
-                return 0  # out of bounds for x hence we gues it dose not converge...
-            elif new_y < np.min(b,d) or new_y > np.max(a,b):
-                return 0  # out of bounds for y hence we guess it dose not converge...
-            
-            mapx = int((N*(new_x-a)/(c-a))+0.5)  # add 0.5 to improve rounding and prevent it from always rounding down.
-            mapy = int((N*(new_y-b)/(d-b))+0.5)
-        return
     def simpleNewtonMethod(self,guess):
         """
         Input
@@ -163,3 +149,9 @@ class fractal2D:
                 return new_guess
             guess = new_guess
         return None
+def f(x,y):
+    return np.array([x**3-3*x*y**2-1,3*x**2*y-y**3])
+
+k = fractal2D(f)
+k.plot(1000,-5,5,-5,5)
+
