@@ -139,6 +139,8 @@ class fractal2D:
 
     def simpleNewtonMethod(self,guess):
         """
+        return
+    def simpleNewtonMethod(self,guess):
         Input
         =====
         guess - tuple for inital guess
@@ -147,6 +149,7 @@ class fractal2D:
         ======
         tuple, zero we converged to, None if it did not converge
         """
+
         initial_guess = guess
         maxLoop = 100000 #need a lot more to get decent results :(
         new_guess = np.array([0,0])
