@@ -81,10 +81,10 @@ class fractal2D:
         ======
         returns index of zero, None if point did not converge
         """
-        val = self.newtonMethod(guess)
+        val = self.newton(guess)
         tol = 10**(-5)  # tolerance value...
         if val is None: # value did not converge
-            return None
+            return-1 
         if self.zeros.size == 0:
             self.zeros = np.array([val])
         t = (self.zeros-val)**2
@@ -97,10 +97,11 @@ class fractal2D:
     
     def call_findZero(self,A,B,simple = False):
         """
-        a helper function such we can vectorise without a problem
+        a helper function such we can vectorise without an error
         """
-        k = (self.find_zero((A,B),simple))
-        return k 
+        #self.curr += 1
+        #print(self.curr, " out of ", self.max)
+        return (self.find_zero((A,B),simple)) 
 
     def plot(self, N, a, b, c, d, simple_newton = False):
         """
@@ -108,6 +109,14 @@ class fractal2D:
         given intervals (a,c) corresponds to the bottom left corner of the grid 
         and (b,d) the top right corner of the grid
         """
+        #implementing simplified newton, implemented in this way to speed up computations
+        if simple_newton == True:
+            self.newton =  self.simpleNewtonMethod
+        else:
+            self.newton =  self.newtonMethod
+        #used for tracking progress...
+        #self.max = N**2
+        #self.curr = 0
 
         Y, X=np.meshgrid(linspace(a,b,N),linspace(c,d,N),indexing='ij')
         """
@@ -138,20 +147,34 @@ class fractal2D:
         ======
         tuple, zero we converged to, None if it did not converge
         """
-
-        maxLoop = 1000
+        initial_guess = guess
+        maxLoop = 100000 #need a lot more to get decent results :(
         new_guess = np.array([0,0])
-        jacob_mat = np.linalg.inv(self.partialDerivatives(guess[0],guess[1]))
+        jacob_mat = np.linalg.inv(self.partialDerivatives(guess[0],guess[1])) / 2
+        f = self.function(guess[0],guess[1])
+        pre_dist = None
         for i in range(maxLoop):
-            new_guess = guess - np.matmul(jacob_mat, f(guess[0],guess[1])) # copied from task 2
-            dist =  (new_guess - guess)**2
-            if (dist < 10**-5).all():
+            new_guess = guess - np.matmul(jacob_mat,self.function(guess[0],guess[1])) # copied from task 2
+            print(new_guess)
+            dist =(new_guess - guess)**2
+            if (dist == float("inf")).any :
+                return None
+            if dist[0]+dist[1]<10**-8 :
                 return new_guess
             guess = new_guess
+            if pre_dist == None:
+                pre_dist = dist[0]+dist[1]
+            elif pre_dist <  dist[0]+dist[1]:
+                gone_up = True
+            pre_dist = dist[0]+dist[1]
+
+        if gone_up == False:
+            return new_guess
         return None
+
 def f(x,y):
     return np.array([x**3-3*x*y**2-1,3*x**2*y-y**3])
-
 k = fractal2D(f)
-k.plot(1000,-5,5,-5,5)
-
+#k.plot(250,-0.5,0.5,-0.5,0.5,True)
+def diff(guess):
+    print("Diff:", k.simpleNewtonMethod(guess)-k.newtonMethod(guess))
