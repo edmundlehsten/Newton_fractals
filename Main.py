@@ -61,7 +61,7 @@ class fractal2D:
             new_guess = guess - np.matmul(np.linalg.inv(self.derivative(guess[0],guess[1])),self.function(guess[0],guess[1]))#should work but need a R^2 function and derivative to test...
 
             if np.abs(new_guess[0]-guess[0]) < 10**(-5) and np.abs(new_guess[1]-guess[1]) < 10**(-5): #close enough to a zero value...
-                return new_guess
+                return new_guess , i
             guess = new_guess
         else:
             return None  # return None if did not converge
@@ -81,7 +81,7 @@ class fractal2D:
         ======
         returns index of zero, None if point did not converge
         """
-        val = self.newton(guess)
+        val , i = self.newton(guess)
         tol = 10**(-5)  # tolerance value...
         if val is None: # value did not converge
             return-1 
@@ -90,10 +90,10 @@ class fractal2D:
         t = (self.zeros-val)**2
         dist = t[:,0] + t[:,1]
         if (dist<tol).any() : #zero exists
-            return np.where(dist<tol)[0][0]
+            return np.where(dist<tol)[0][0] , i
         else:  # value dose not exist yet
             np.reshape(np.append(self.zeros,val),(-1,2)) #add value to zeros
-            return self.zeros.size-1 
+            return self.zeros.size-1 , i 
     
     def call_findZero(self,A,B,simple = False):
         """
@@ -125,13 +125,13 @@ class fractal2D:
         v_zeroes=np.vectorize(self.call_findZero)
         """ vectorizes the function v_zeroes
         """
-        A=(v_zeroes(X,Y,simple_newton))
+        A, B=(v_zeroes(X,Y,simple_newton))
         """
         creats matrix A 
         """
         pt.figure()
         pt.axis("off")
-        pt.pcolor(X,Y,A)
+        pt.pcolor(X,Y,B)
         pt.savefig("image.png")
         pt.show()
         #return plt.plot(X,Y,marker='.',colour='k',linstyle='none'),
