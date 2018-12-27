@@ -1,5 +1,6 @@
 from scipy import *
 import numpy as np
+from matplotlib import pyplot as pt
 
 class fractal2D:
     def partialDerivatives(self,x,y):
@@ -31,7 +32,7 @@ class fractal2D:
         der : derivative of the function taking a tuple and returning a 2x2 matrix (Jacobian matrix)
         """
         self.function = f
-        self.zeros = np.array([])
+        self.zeros = np.array([[ ]])
         if derivative==None:
             self.derivative=self.partialDerivatives
         else:
@@ -60,7 +61,7 @@ class fractal2D:
             new_guess = guess - np.matmul(np.linalg.inv(self.derivative(guess[0],guess[1])),self.function(guess[0],guess[1]))#should work but need a R^2 function and derivative to test...
 
             if np.abs(new_guess[0]-guess[0]) < 10**(-5) and np.abs(new_guess[1]-guess[1]) < 10**(-5): #close enough to a zero value...
-                return new_guess
+                return new_guess , i
             guess = new_guess
         else:
             return None  # return None if did not converge
@@ -68,45 +69,110 @@ class fractal2D:
   
     
   
-    def find_zero(self, guess):
+    def find_zero(self, guess, simple_newton = False):
         """
+        function that carries out the newton integration method
+        Author: Edmund
+        Inputs
+        ======
+        guess - initial guess to for a zero
+        
         Output
         ======
         returns index of zero, None if point did not converge
         """
-        val = newtonMethod(guess)
+        val , i = self.newton(guess)
+        tol = 10**(-5)  # tolerance value...
         if val is None: # value did not converge
-            return None        
-        if (self.zeros-val < 10**-5).any: #zero already exists
-            np.where(self.zeros-val < 10**-5)
+            return-1 
+        if self.zeros.size == 0:
+            self.zeros = np.array([val])
+        t = (self.zeros-val)**2
+        dist = t[:,0] + t[:,1]
+        if (dist<tol).any() : #zero exists
+            return np.where(dist<tol)[0][0] , i
         else:  # value dose not exist yet
-            np.append(self.zeros,val) #add value to zeros
-            return self.zeros.size-1
+            np.reshape(np.append(self.zeros,val),(-1,2)) #add value to zeros
+            return self.zeros.size-1 , i 
     
-    def plot(self, N, a, b, c, d):
+    def call_findZero(self,A,B,simple = False):
+        """
+        a helper function such we can vectorise without an error
+        """
+        #self.curr += 1
+        #print(self.curr, " out of ", self.max)
+        return (self.find_zero((A,B),simple)) 
+
+    def plot(self, N, a, b, c, d, simple_newton = False):
         """
         where N eventually determines the size of the matrix and a,b,c,d are the maually
         given intervals (a,c) corresponds to the bottom left corner of the grid 
         and (b,d) the top right corner of the grid
         """
+        #implementing simplified newton, implemented in this way to speed up computations
+        if simple_newton == True:
+            self.newton =  self.simpleNewtonMethod
+        else:
+            self.newton =  self.newtonMethod
+        #used for tracking progress...
+        #self.max = N**2
+        #self.curr = 0
+
         Y, X=np.meshgrid(linspace(a,b,N),linspace(c,d,N),indexing='ij')
         """
         Gives the transpposed matrices X and Y
         """
-        v_zeroes=np.vectorize(find_zero)
+        v_zeroes=np.vectorize(self.call_findZero)
         """ vectorizes the function v_zeroes
         """
-        A=(v_zeroes(X,Y))
+        A, B=(v_zeroes(X,Y,simple_newton))
         """
         creats matrix A 
         """
         pcolor(X,Y,A)
-        return plt.plot(X,Y,marker='.',colour='k',linstyle='none'),
+        #return plt.plot(X,Y,marker='.',colour='k',linstyle='none'),
+        return A
     
-    
-    def simpleNewtonMethod(self):
+
+    def simpleNewtonMethod(self,guess):
         """
-        (task 5)
-        TODO: write method descriptiion and method...
+        Input
+        =====
+        guess - tuple for inital guess
+
+        Output
+        ======
+        tuple, zero we converged to, None if it did not converge
         """
-        return
+
+        initial_guess = guess
+        maxLoop = 100000 #need a lot more to get decent results :(
+        new_guess = np.array([0,0])
+        jacob_mat = np.linalg.inv(self.partialDerivatives(guess[0],guess[1])) / 2
+        f = self.function(guess[0],guess[1])
+        pre_dist = None
+        for i in range(maxLoop):
+            new_guess = guess - np.matmul(jacob_mat,self.function(guess[0],guess[1])) # copied from task 2
+            print(new_guess)
+            dist =(new_guess - guess)**2
+            if (dist == float("inf")).any :
+                return None
+            if dist[0]+dist[1]<10**-8 :
+                return new_guess
+            guess = new_guess
+            if pre_dist == None:
+                pre_dist = dist[0]+dist[1]
+            elif pre_dist <  dist[0]+dist[1]:
+                gone_up = True
+            pre_dist = dist[0]+dist[1]
+
+        if gone_up == False:
+            return new_guess
+        return None
+
+def f(x,y):
+    return np.array([x**3-3*x*y**2-1,3*x**2*y-y**3])
+k = fractal2D(f)
+#k.plot(250,-0.5,0.5,-0.5,0.5,True)
+def diff(guess):
+    print("Diff:", k.simpleNewtonMethod(guess)-k.newtonMethod(guess))
