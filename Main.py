@@ -89,6 +89,7 @@ class fractal2D:
             self.zeros = np.array([val])
         t = (self.zeros-val)**2
         dist = t[:,0] + t[:,1]
+        print(t)
         if (dist<tol).any() : #zero exists
             return np.where(dist<tol)[0][0] , i
         else:  # value dose not exist yet
@@ -129,10 +130,15 @@ class fractal2D:
         """
         creats matrix A 
         """
-        pt.pcolor(X,Y,A)
+#        colordict = {-1:(0,0,0),1:(1,0,0),2:(1,1,0),0:(0,1,0),3:(0,0,1)}
+#        test_rgb = [[colordict[i] for i in row] for row in A]
+#        pt.imshow(test_rgb, interpolation = 'none')
+
+        pt.pcolor(X,Y,A,vmin=-1,vmax = A.max())
         #return plt.plot(X,Y,marker='.',colour='k',linstyle='none'),
+        pt.colorbar() 
         pt.show()
-        #return A
+        return A
     
 
     def simpleNewtonMethod(self,guess):
@@ -175,7 +181,7 @@ def diff(guess):
     print("Diff:", k.simpleNewtonMethod(guess)-k.newtonMethod(guess))
 
 def g(x,y):
-    return np.array([x**3-3*x*y**2-2*x-2,3*x**2*y-y**3-2*y])
+    return np.array([(x**3)-(3*x)*(y**2)-(2*x)-2,3*(x**2)*y-(y**3)-2*y])
 l=fractal2D(g)
 
 def h(x,y):
