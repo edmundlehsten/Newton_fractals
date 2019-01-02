@@ -64,7 +64,7 @@ class fractal2D:
                 return new_guess , i
             guess = new_guess
         else:
-            return None  # return None if did not converge
+            return None,maxloop  # return None if did not converge
 
   
     
@@ -131,6 +131,7 @@ class fractal2D:
         """
         pt.pcolor(X,Y,A)
         #return plt.plot(X,Y,marker='.',colour='k',linstyle='none'),
+        pt.show()
         #return A
     
 
@@ -157,11 +158,14 @@ class fractal2D:
         for i in range(maxloop):
             new_guess = guess - np.matmul(np.linalg.inv(Jacobian),self.function(guess[0],guess[1]))#should work but need a R^2 function and derivative to test...
 
+            if np.abs(new_guess[0]-guess[0]) > 10 ** 100:
+                print( "overflow..." )
+                return None, maxloop
             if np.abs(new_guess[0]-guess[0]) < 10**(-5) and np.abs(new_guess[1]-guess[1]) < 10**(-5): #close enough to a zero value...
                 return new_guess , i
             guess = new_guess
         else:
-            return None  # return None if did not converge
+            return None,maxloop  # return None if did not converge
             
 def f(x,y):
     return np.array([x**3-3*x*y**2-1,3*x**2*y-y**3])
