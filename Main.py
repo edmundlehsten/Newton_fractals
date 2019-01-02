@@ -131,48 +131,49 @@ class fractal2D:
         """
         pt.pcolor(X,Y,A)
         #return plt.plot(X,Y,marker='.',colour='k',linstyle='none'),
-        return A
+        #return A
     
 
     def simpleNewtonMethod(self,guess):
         """
-        Input
-        =====
-        guess - tuple for inital guess
-
-        Output
+        function that carries out the newton integration method
+        Author: Edmund
+        Inputs
         ======
-        tuple, zero we converged to, None if it did not converge
+        guess - tuple, list or 1-dimensional array of length 2 with float/ integer entries
+        
+        Outputs        
+        ======
+        zero - loaction of zero, returns None if the guess did not converge (tuple)
         """
+        if isinstance(guess,(list,tuple,np.ndarray)) and size(guess)==2:
+            guess=array(guess)
+        else:
+            raise TypeError('The initial guess is not of the correct type. It must be a list with two integer/ float entries, a tuple or an array of size (2,)')
+        
+        maxloop = 1000
+        new_guess = array([0,0]) #initiate value here so that it dose not get reinitiated for each loop (to improve performance)
+        Jacobian=self.derivative(guess[0],guess[1])
+        for i in range(maxloop):
+            new_guess = guess - np.matmul(np.linalg.inv(Jacobian),self.function(guess[0],guess[1]))#should work but need a R^2 function and derivative to test...
 
-        initial_guess = guess
-        maxLoop = 100000 #need a lot more to get decent results :(
-        new_guess = np.array([0,0])
-        jacob_mat = np.linalg.inv(self.partialDerivatives(guess[0],guess[1])) / 2
-        f = self.function(guess[0],guess[1])
-        pre_dist = None
-        for i in range(maxLoop):
-            new_guess = guess - np.matmul(jacob_mat,self.function(guess[0],guess[1])) # copied from task 2
-            print(new_guess)
-            dist =(new_guess - guess)**2
-            if (dist == float("inf")).any :
-                return None
-            if dist[0]+dist[1]<10**-8 :
-                return new_guess
+            if np.abs(new_guess[0]-guess[0]) < 10**(-5) and np.abs(new_guess[1]-guess[1]) < 10**(-5): #close enough to a zero value...
+                return new_guess , i
             guess = new_guess
-            if pre_dist == None:
-                pre_dist = dist[0]+dist[1]
-            elif pre_dist <  dist[0]+dist[1]:
-                gone_up = True
-            pre_dist = dist[0]+dist[1]
-
-        if gone_up == False:
-            return new_guess
-        return None
-
+        else:
+            return None  # return None if did not converge
+            
 def f(x,y):
     return np.array([x**3-3*x*y**2-1,3*x**2*y-y**3])
 k = fractal2D(f)
 #k.plot(250,-0.5,0.5,-0.5,0.5,True)
 def diff(guess):
     print("Diff:", k.simpleNewtonMethod(guess)-k.newtonMethod(guess))
+
+def g(x,y):
+    return np.array([x**3-3*x*y**2-2*x-2,3*x**2*y-y**3-2*y])
+l=fractal2D(g)
+
+def h(x,y):
+    return np.array([x**8-28*x**6*y**2+70*x**4*y**4+15*x**4-28*x**2*y**6-90*x**2*y**2+y**8+15*y**4-16,8*x**7*y-56*x**5*y**3+56*x**3*y**5+60*x**3*y-8*x*y**7-60*x*y**3])
+m=fractal2D(h)
