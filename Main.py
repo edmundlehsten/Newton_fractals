@@ -129,7 +129,7 @@ class fractal2D:
         """
         creats matrix A 
         """
-        pcolor(X,Y,A)
+        pt.pcolor(X,Y,A)
         #return plt.plot(X,Y,marker='.',colour='k',linstyle='none'),
         return A
     
