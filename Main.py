@@ -93,7 +93,7 @@ class fractal2D:
         if (dist<tol).any() : #zero exists
             return np.where(dist<tol)[0][0] , i
         else:  # value dose not exist yet
-            np.reshape(np.append(self.zeros,val),(-1,2)) #add value to zeros
+            self.zeros=np.reshape(np.append(self.zeros,val),(-1,2)) #add value to zeros
             return self.zeros.size-1 , i 
     
     def call_findZero(self,A,B,simple = False):
