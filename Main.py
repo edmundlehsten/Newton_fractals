@@ -163,7 +163,7 @@ class fractal2D:
         zero - loaction of zero, returns None if the guess did not converge (tuple)
         """
         if isinstance(guess,(list,tuple,np.ndarray)) and size(guess)==2:
-            guess=array(guess)
+            guess=np.array(guess)
         else:
             raise TypeError('The initial guess is not of the correct type. It must be a list with two integer/ float entries, a tuple or an array of size (2,)')
         
