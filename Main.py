@@ -58,13 +58,18 @@ class fractal2D:
         maxloop = 1000
         new_guess = array([0,0]) #initiate value here so that it dose not get reinitiated for each loop (to improve performance)
         for i in range(maxloop):
-            new_guess = guess - np.matmul(np.linalg.inv(self.derivative(guess[0],guess[1])),self.function(guess[0],guess[1]))#should work but need a R^2 function and derivative to test...
+            Jacobian=self.derivative(guess[0],guess[1])
+            if np.linalg.det(Jacobian)==0:
+                return None,maxloop
+            else:
+                Jacobian_inv=np.linalg.inv(Jacobian)
+            new_guess = guess - np.matmul(Jacobian_inv,self.function(guess[0],guess[1]))#should work but need a R^2 function and derivative to test...
 
             if np.abs(new_guess[0]-guess[0]) < 10**(-5) and np.abs(new_guess[1]-guess[1]) < 10**(-5): #close enough to a zero value...
                 return new_guess , i
             guess = new_guess
         else:
-            return None,maxloop  # return None if did not converge
+            return None,maxloop # return None if did not converge
 
   
     
@@ -81,20 +86,20 @@ class fractal2D:
         ======
         returns index of zero, None if point did not converge
         """
+        #val , i = self.newton(guess)
         val , i = self.newton(guess)
         tol = 10**(-5)  # tolerance value...
         if val is None: # value did not converge
-            return-1 
+            return -1,i
         if self.zeros.size == 0:
             self.zeros = np.array([val])
         t = (self.zeros-val)**2
         dist = t[:,0] + t[:,1]
-        print(t)
         if (dist<tol).any() : #zero exists
             return np.where(dist<tol)[0][0] , i
         else:  # value dose not exist yet
             self.zeros=np.reshape(np.append(self.zeros,val),(-1,2)) #add value to zeros
-            return self.zeros.size-1 , i 
+            return self.zeros.size/2-1 , i 
     
     def call_findZero(self,A,B,simple = False):
         """
@@ -111,8 +116,10 @@ class fractal2D:
         and (b,d) the top right corner of the grid
         """
         #implementing simplified newton, implemented in this way to speed up computations
-        if simple_newton == True:
-            self.newton =  self.simpleNewtonMethod
+        if simple_newton == 1:                                                  
+                 self.newton =  self.simpleNewtonMethod                              
+        elif simple_newton == 2:                                                
+             self.newton = self.optimised
         else:
             self.newton =  self.newtonMethod
         #used for tracking progress...
@@ -126,6 +133,8 @@ class fractal2D:
         v_zeroes=np.vectorize(self.call_findZero)
         """ vectorizes the function v_zeroes
         """
+        #print(Y)
+        #print(type(Y))
         A, B=(v_zeroes(X,Y,simple_newton))
         """
         creats matrix A 
@@ -134,11 +143,11 @@ class fractal2D:
 #        test_rgb = [[colordict[i] for i in row] for row in A]
 #        pt.imshow(test_rgb, interpolation = 'none')
 
-        pt.pcolor(X,Y,A,vmin=-1,vmax = A.max())
+        pt.pcolor(X,Y,A,vmin=-1,vmax = A.max(),cmap=pt.cm.Set1)
         #return plt.plot(X,Y,marker='.',colour='k',linstyle='none'),
         pt.colorbar() 
         pt.show()
-        return A
+        #return A
     
 
     def simpleNewtonMethod(self,guess):
@@ -159,19 +168,28 @@ class fractal2D:
             raise TypeError('The initial guess is not of the correct type. It must be a list with two integer/ float entries, a tuple or an array of size (2,)')
         
         maxloop = 1000
-        new_guess = array([0,0]) #initiate value here so that it dose not get reinitiated for each loop (to improve performance)
+        new_guess = np.array([0,0]) #initiate value here so that it dose not get reinitiated for each loop (to improve performance)
         Jacobian=self.derivative(guess[0],guess[1])
+        if np.linalg.det(Jacobian)==0:  
+            return None,maxloop
+        else:
+            Jacobian_inv=np.linalg.inv(Jacobian)
         for i in range(maxloop):
-            new_guess = guess - np.matmul(np.linalg.inv(Jacobian),self.function(guess[0],guess[1]))#should work but need a R^2 function and derivative to test...
-
-            if np.abs(new_guess[0]-guess[0]) > 10 ** 100:
-                print( "overflow..." )
-                return None, maxloop
-            if np.abs(new_guess[0]-guess[0]) < 10**(-5) and np.abs(new_guess[1]-guess[1]) < 10**(-5): #close enough to a zero value...
+            new_guess = guess - np.matmul(Jacobian_inv,self.function(guess[0],guess[1]))#should work but need a R^2 function and derivative to test...
+            if (np.abs(new_guess)>1e+50).any():
+                return None,maxloop
+            if np.abs(new_guess[0]-guess[0]) < 10**(-4) and np.abs(new_guess[1]-guess[1]) < 10**(-5): #close enough to a zero value...
                 return new_guess , i
             guess = new_guess
         else:
-            return None,maxloop  # return None if did not converge
+            return None,maxloop # return None if did not converge
+        
+    def optimised(self,guess):                                                  
+        ret_val, i = self.simpleNewtonMethod(guess)   
+        if isinstance(ret_val,(np.ndarray)):                                                    
+            return ret_val, i                                                   
+        else :                                                                  
+            return self.newtonMethod(guess) 
             
 def f(x,y):
     return np.array([x**3-3*x*y**2-1,3*x**2*y-y**3])
