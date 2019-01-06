@@ -1,6 +1,7 @@
 # Newton_fractals
 NUMA01 Project 4
-import time """need to import this"""
+import time 
+"""need to import this"""
 
 """
 for function k
