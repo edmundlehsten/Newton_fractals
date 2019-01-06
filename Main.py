@@ -75,7 +75,7 @@ class fractal2D:
   
     
   
-    def find_zero(self, guess, simple_newton = False):
+    def find_zero(self, guess, simple_newton = 0):
         """
         function that carries out the newton integration method
         Author: Edmund
