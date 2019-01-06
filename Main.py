@@ -1,6 +1,7 @@
 from scipy import *
 import numpy as np
 from matplotlib import pyplot as pt
+from matplotlib.colors import LinearSegmentedColormap 
 
 class fractal2D:
     def partialDerivatives(self,x,y):
@@ -139,15 +140,15 @@ class fractal2D:
         """
         creats matrix A 
         """
-#        colordict = {-1:(0,0,0),1:(1,0,0),2:(1,1,0),0:(0,1,0),3:(0,0,1)}
-#        test_rgb = [[colordict[i] for i in row] for row in A]
-#        pt.imshow(test_rgb, interpolation = 'none')
-
-        pt.pcolor(X,Y,A,vmin=-1,vmax = A.max(),cmap=pt.cm.Set1)
-        #return plt.plot(X,Y,marker='.',colour='k',linstyle='none'),
+        pcol = pt.pcolormesh(X,Y,A,cmap=pt.cm.Set1, linewidth=0,rasterized=True)
+        pcol.set_edgecolor('face')
         pt.colorbar() 
+        #make custom color map
+        custom = [(0,(0, 0, 0, 0)), (1,(0, 0, 0, 1))]
+        my_cmap = LinearSegmentedColormap.from_list('something',custom)
+        pcol = pt.pcolormesh(X,Y,B,cmap=my_cmap,linewidth=0,rasterized=True)
         pt.show()
-        #return A
+        return A,B
     
 
     def simpleNewtonMethod(self,guess):
