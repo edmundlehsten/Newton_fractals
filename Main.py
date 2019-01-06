@@ -110,7 +110,7 @@ class fractal2D:
         #print(self.curr, " out of ", self.max)
         return (self.find_zero((A,B),simple)) 
 
-    def plot(self, N, a, b, c, d, simple_newton = False):
+    def plot(self, N, a, b, c, d, simple_newton = False, show_plot = True):
         """
         where N eventually determines the size of the matrix and a,b,c,d are the maually
         given intervals (a,c) corresponds to the bottom left corner of the grid 
@@ -140,14 +140,17 @@ class fractal2D:
         """
         creats matrix A 
         """
-        pcol = pt.pcolormesh(X,Y,A,cmap=pt.cm.Set1, linewidth=0,rasterized=True)
-        pcol.set_edgecolor('face')
-        pt.colorbar() 
-        #make custom color map
-        custom = [(0,(0, 0, 0, 0)), (1,(0, 0, 0, 1))]
-        my_cmap = LinearSegmentedColormap.from_list('something',custom)
-        pcol = pt.pcolormesh(X,Y,B,cmap=my_cmap,linewidth=0,rasterized=True)
-        pt.show()
+        if show_plot:
+            B = ((B-1)%10)/10
+            color_map = pt.cm.get_cmap('Set1')
+            color_map.set_under('0')
+            pcol = pt.pcolormesh(X,Y,A,cmap=pt.cm.Set1,edgecolor = 'face', linewidth=0,rasterized=True, vmin=0,vmax = A.max())
+            pt.colorbar() 
+            #make custom color map
+            custom = [(0,(0, 0, 0, 0)), (1,(0, 0, 0, 0.5))]
+            my_cmap = LinearSegmentedColormap.from_list('something',custom)
+            pcol = pt.pcolormesh(X,Y,B,edgecolor = 'face',cmap=my_cmap,linewidth=0,rasterized=True)
+            pt.show()
         return A,B
     
 
