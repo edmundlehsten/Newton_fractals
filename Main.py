@@ -176,7 +176,7 @@ class fractal2D:
             Jacobian_inv=np.linalg.inv(Jacobian)
         for i in range(maxloop):
             new_guess = guess - np.matmul(Jacobian_inv,self.function(guess[0],guess[1]))#should work but need a R^2 function and derivative to test...
-            if (np.abs(new_guess)>1e+50).any():
+            if (np.abs(new_guess)>1e+30).any():
                 return None,maxloop
             if np.abs(new_guess[0]-guess[0]) < 10**(-4) and np.abs(new_guess[1]-guess[1]) < 10**(-5): #close enough to a zero value...
                 return new_guess , i
