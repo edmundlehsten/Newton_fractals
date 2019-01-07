@@ -89,7 +89,7 @@ class fractal2D:
         """
         #val , i = self.newton(guess)
         val , i = self.newton(guess)
-        tol = 10**(-5)  # tolerance value...
+        tol = 10**(-4)  # tolerance value...
         if val is None: # value did not converge
             return -1,i
         if self.zeros.size == 0:
@@ -182,7 +182,7 @@ class fractal2D:
             new_guess = guess - np.matmul(Jacobian_inv,self.function(guess[0],guess[1]))#should work but need a R^2 function and derivative to test...
             if (np.abs(new_guess)>1e+30).any():
                 return None,maxloop
-            if np.abs(new_guess[0]-guess[0]) < 10**(-4) and np.abs(new_guess[1]-guess[1]) < 10**(-5): #close enough to a zero value...
+            if np.abs(new_guess[0]-guess[0]) < 10**(-5) and np.abs(new_guess[1]-guess[1]) < 10**(-5): #close enough to a zero value...
                 return new_guess , i
             guess = new_guess
         else:
