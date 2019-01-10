@@ -58,16 +58,16 @@ class fractal2D:
 
         if derivative != None:
             # test if f is a function
-            if not callable(f):
+            if not callable(derivative):
                 raise TypeError('the input function given is not a callable function')
 
             #test if function takes 2 inputs
-            if len(str(signature(f)).split(",")) - len(str(signature(f)).split("=")) != 1:
+            if len(str(signature(derivative)).split(",")) - len(str(signature(derivative)).split("=")) != 1:
                 raise TypeError('The input function takes the wrong number of arguments, should be 2 which are not predefined')
 
             #check example inputs and outputs
             try:
-                return_val = f(1.5,1.5)
+                return_val = derivative(1.5,1.5)
                 # test number of returns
                 if not isinstance(return_val,(list,tuple,np.ndarray)) and len(return_val) != 2:
                     raise TypeError('the given input function did not return 2 values')
