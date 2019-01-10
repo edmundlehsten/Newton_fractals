@@ -1,4 +1,4 @@
-import Main as newtonFractal
+import newtfraclib as newtonFractal
 import numpy as np
 from matplotlib import pyplot as pt
 from matplotlib.colors import LinearSegmentedColormap 
