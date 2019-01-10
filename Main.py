@@ -2,6 +2,7 @@ from scipy import *
 import numpy as np
 from matplotlib import pyplot as pt
 from matplotlib.colors import LinearSegmentedColormap 
+from inspect import signature
 
 class fractal2D:
     def partialDerivatives(self,x,y):
@@ -32,6 +33,53 @@ class fractal2D:
         f : function taking a tuple and returning a tuple
         der : derivative of the function taking a tuple and returning a 2x2 matrix (Jacobian matrix)
         """
+        # test if f is a function
+        if not callable(f):
+            raise TypeError('the input function given is not a callable function')
+
+        #test if function takes 2 inputs
+        if len(str(signature(f)).split(",")) - len(str(signature(f)).split("=")) != 1:
+            raise TypeError('The input function takes the wrong number of arguments, should be 2 which are not predefined')
+
+        #check example inputs and outputs
+        try:
+            return_val = f(1.5,1.5)
+            # test number of returns
+            if not isinstance(return_val,(list,tuple,np.ndarray)) and len(return_val) != 2:
+                raise TypeError('the given input function did not return 2 values')
+
+            # test return type:
+            if not isinstance(return_val[0],(float,int,np.float64, np.float32, np.int32, np.int64)) or not isinstance(return_val[1],(float,int,np.float64, np.float32, np.int32, np.int64)) :
+                raise TypeError("f return value was of wrong type")
+
+        except:
+            raise TypeError('the given function dose not except standard inputs, the given inputs where (1.5, 1.5)')
+
+
+        if derivative != None:
+            # test if f is a function
+            if not callable(derivative):
+                raise TypeError('the input function given is not a callable function')
+
+            #test if function takes 2 inputs
+            if len(str(signature(derivative)).split(",")) - len(str(signature(derivative)).split("=")) != 1:
+                raise TypeError('The input function takes the wrong number of arguments, should be 2 which are not predefined')
+
+            #check example inputs and outputs
+            try:
+                return_val = derivative(1.5,1.5)
+                # test number of returns
+                if not isinstance(return_val,(list,tuple,np.ndarray)) and len(return_val) != 2:
+                    raise TypeError('the given input function did not return 2 values')
+     
+                # test return type:
+                if not isinstance(return_val[0],(float,int,np.float64, np.float32, np.int32, np.int64)) or not isinstance(return_val[1],(float,int,np.float64, np.float32, np.int32, np.int64)) :
+                    raise TypeError("f return value was of wrong type")
+     
+            except:
+                raise TypeError('the given function dose not except standard inputs, the given inputs where (1.5, 1.5)')
+
+
         self.function = f
         self.zeros = np.array([[ ]])
         if derivative==None:
@@ -194,7 +242,7 @@ class fractal2D:
             return ret_val, i                                                   
         else :                                                                  
             return self.newtonMethod(guess) 
-            
+
 def f(x,y):
     return np.array([x**3-3*x*y**2-1,3*x**2*y-y**3])
 k = fractal2D(f)
