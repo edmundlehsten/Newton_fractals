@@ -3,21 +3,21 @@ import numpy as np
 from matplotlib import pyplot as pt
 from matplotlib.colors import LinearSegmentedColormap 
 
-start_xdim = 2
-start_ydim = 2
-focus = (0,0)
-frames = 100
-end_xdim = 0.05
-end_ydim = 0.05
-resolution = 250
-directory = "frames/test"
+start_xdim = 0.2
+start_ydim = 0.2
+focus = (0,0.4)
+frames = 150
+end_xdim = 0.001
+end_ydim = 0.001
+resolution = 200
+directory = "frames/fin"
 xm = (end_xdim - start_xdim) / frames 
 ym = (end_ydim - start_ydim) / frames 
 
-def f(x,y):
-    return np.array([x**3-3*x*y**2-1,3*x**2*y-y**3])
 
-fractal = newtonFractal.fractal2D(f)
+def g(x,y):
+    return np.array([(x**3)-(3*x)*(y**2)-(2*x)-2,3*(x**2)*y-(y**3)-2*y])
+fractal=newtonFractal.fractal2D(g)
 for i  in range(frames):
     #get A and B plot
     x1 = focus[0]-(xm*i+start_xdim)/2
