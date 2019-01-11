@@ -105,7 +105,7 @@ class fractal2D:
         else:
             if not isinstance(guess,(list,tuple,np.ndarray)):
                 raise TypeError('The initial guess is not of the correct type.\nIt is of type:' + str(type(guess)))
-            else     
+            else:     
                 raise TypeError('The initial guess is not of the correct length.\nIt is of length:' + str(size(guess)))
 
         #run simple newton method
